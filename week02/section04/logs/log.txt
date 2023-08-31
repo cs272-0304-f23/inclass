@@ -1,0 +1,1 @@
+2023/08/31 09:34:10 open ../fileio/foo.tx: no such file or directory
