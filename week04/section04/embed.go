@@ -5,7 +5,7 @@ type Foo struct {
 }
 
 type Bar struct {
-	Foo
+	Foo // embedded Foo in the Bar
 	j int
 }
 

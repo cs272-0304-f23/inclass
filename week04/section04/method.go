@@ -1,13 +1,17 @@
 package main
 
+import (
+	"fmt"
+)
+
 type Foo struct {
 	i int
 }
 
 // PrintFoo is a method of the foo object
 // f is a "receiver" in Go terminology, similar to self/this
-func (f Foo) PrintFoo() {
-	fmt.Println(f.i)
+func (x Foo) PrintFoo() {
+	fmt.Println(x.i)
 }
 
 // Bar embeds a Foo, somewhat like inheriting a derived
@@ -20,4 +24,5 @@ type Bar struct {
 func main() {
 	var b Bar
 	b.i = 0
+	b.PrintFoo()
 }
