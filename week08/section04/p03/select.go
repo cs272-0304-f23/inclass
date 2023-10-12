@@ -24,19 +24,27 @@ func Crawl(url string) {
 	// put the seed URL into the channel
 	dlInC <- url
 
+	wg sync.Waitgroup
+	
 outer:
 	for {
 		// use select to monitor a group of channels for readiness
 		// in this example, fire off short-lived goroutines for each task
 		select {
 		case url := <-dlInC:
-			go Download(url, dlOutC)
+			wg.Add(1)
+			go Download(&wg, url, dlOutC)
 		case dlRes := <-dlOutC:
 			go Extract(dlRes)
 		case quit := <-quitC:
 			// break out of the for look as well as the select
 			break outer
 		}
+		
+		go func() {
+			wg.Wait()
+			quitC <- true
+		}()
 	}
 	close(dlInC)
 	close(dlOutC)
