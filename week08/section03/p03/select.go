@@ -6,9 +6,11 @@ type DownloadResult struct {
 	url  string // may be needed by subsequent goroutines
 }
 
-func Download(url string, outC chan DownloadResult) {
-	// http.Get()...
+func Download(wg *sync.WaitGroup, url string, outC chan DownloadResult) {
+	wg.Add(1)
+	defer wg.Done()
 
+	// http.Get()...
 	outC <- DownloadResult{nil, nil}
 }
 
@@ -27,6 +29,8 @@ func Crawl(url string) {
 	// Writing the 11th item blocks
 	dlInC := make(chan string, 10)
 	dlOutC := make(chan DownloadResult, 10)
+
+	var wg sync.WaitGroup
 
 outer:
 	for {
@@ -49,6 +53,11 @@ outer:
 		if len(dlInC) == 0 && len(dlOutC) == 0 {
 			break
 		}
+
+		go func() {
+			wg.Wait()
+			quit <- true
+		}()
 	}
 
 	close(dlInC)
